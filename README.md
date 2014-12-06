@@ -13,4 +13,11 @@ Will display overall "salinity" percentage at the top of the page. Goal being 10
 __Install__
 ------------
 I recommend creating a virtualenv envrionment, then simply run:
+```
 pip install -r requirements.txt
+```
+
+To setup django's database (sqlite for now):
+```
+salinity/manage.py syncdb
+```
