@@ -6,5 +6,6 @@ urlpatterns = patterns('',
     # url(r'^$', 'salinity.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    url(r'^admin/', include(admin.site.urls)),
+#    url(r'^admin/', include(admin.site.urls)),
+    url(r'^$', 'salinity_front.views.index'),
 )

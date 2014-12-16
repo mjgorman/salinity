@@ -1,0 +1,15 @@
+<html>
+<head>
+<title>The servers are {{ saltyness }}% salty. </title>
+</head>
+<body>
+The servers are {{ saltyness }}% salty. 
+<p>
+{% for role in roles %}
+<p>{{ role }}:</p>
+    {% for env in envs %}    
+    {{ env|rjust:"10" }}: GREEN &nbsp;&nbsp;
+    {% endfor %}
+{% endfor %}
+</body>
+</html>
