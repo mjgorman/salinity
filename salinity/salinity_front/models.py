@@ -29,3 +29,18 @@ class CheckRedis(object):
         for redis_return in self.return_from_glob("*" + role + "*"):
             if "false" in redis_return.lower():
                 print redis_return
+    def get_server_list(self, glob):
+        """
+        Using the server glob, find a matching list of servers in 
+        redis returns so that they can be checked individually.
+        """
+        server_list = []
+        for result in self.con.keys(glob + "*:state.highstate"):
+            server_list.append(result.split(":")[0])
+        return server_list
+    def get_last_highstate(self, server):
+        """
+        Check the server:state.highstate list entry for
+        the most recent highstat value. We will use this
+        to parse json and look for bad states.
+        """
