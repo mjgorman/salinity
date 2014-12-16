@@ -31,7 +31,7 @@ class CheckRedis(object):
                 print redis_return
     def get_server_list(self, glob):
         """
-        Using the server glob, find a matching list of servers in 
+        Using the server glob, find a matching list of servers in
         redis returns so that they can be checked individually.
         """
         server_list = []
@@ -44,3 +44,4 @@ class CheckRedis(object):
         the most recent highstat value. We will use this
         to parse json and look for bad states.
         """
+        return self.con.lindex(server + ":state.highstate", 0)
