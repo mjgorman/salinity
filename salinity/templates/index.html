@@ -3,18 +3,12 @@
 <title>The servers are {{ saltyness }}% salty. </title>
 </head>
 <body>
-<p>
-<p>TEST:
-<p> PHP:</p>
-qa: {{ test_role }}
-
 <p>The servers are {{ saltyness }}% salty. 
 <p>
-{% for role in roles %}
-<p>{{ role }}:</p>
-    {% for env in envs %}    
-    {{ env|rjust:"10" }}: GREEN &nbsp;&nbsp;
-    {% endfor %}
+{% for role,result in context_dict.iteritems %}
+<p>qa: 
+<p> &nbsp;&nbsp;{{ role }}: {{ result }}
 {% endfor %}
+
 </body>
 </html>

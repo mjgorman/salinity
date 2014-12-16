@@ -18,11 +18,12 @@ class CheckRedis(object):
         """
         Check for failed highstates
         """
-        for server in self.get_server_list("*" + role + "*" + env):
+        server_list = self.get_server_list("*" + role + "*" + env)
+        for server in (server for server in server_list if server):
             if self.check_failed_highstate(server, self.find_last_highstate(server)):
                 return "RED"
-        return "GREEN"
-
+        if server_list:
+            return "GREEN"
     def get_server_list(self, glob):
         """
         Using the server glob, find a matching list of servers in
@@ -38,7 +39,6 @@ class CheckRedis(object):
         the most recent highstat value. We will use this
         to parse json and look for bad states.
         """
-        print self.con.lindex(server + ":state.highstate", 0)
         return self.con.lindex(server + ":state.highstate", 0)
     def check_failed_highstate(self, server, last_highstate):
         """
@@ -47,5 +47,4 @@ class CheckRedis(object):
         highstate = self.con.get(server + ":" + last_highstate)
         if "False" in highstate:
             return True
-        else:
-            return False
+        return False
