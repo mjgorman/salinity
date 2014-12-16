@@ -14,21 +14,15 @@ class CheckRedis(object):
         """
         self.server = server
         self.con = redis.Redis(self.server)
-    def return_from_glob(self, glob):
-        """
-        Do some glob magic to find highstate
-        """
-        return_list = []
-        for match in self.con.keys(glob):
-            return_list.append(self.con.hget(match, 'highstate'))
-        return return_list
-    def check_failed(self, role):
+    def check_failed_role(self, role, env):
         """
         Check for failed highstates
         """
-        for redis_return in self.return_from_glob("*" + role + "*"):
-            if "false" in redis_return.lower():
-                print redis_return
+        for server in self.get_server_list("*" + role + "*" + env):
+            if self.check_failed_highstate(server, self.find_last_highstate(server)):
+                return "RED"
+        return "GREEN"
+
     def get_server_list(self, glob):
         """
         Using the server glob, find a matching list of servers in
@@ -38,10 +32,20 @@ class CheckRedis(object):
         for result in self.con.keys(glob + "*:state.highstate"):
             server_list.append(result.split(":")[0])
         return server_list
-    def get_last_highstate(self, server):
+    def find_last_highstate(self, server):
         """
         Check the server:state.highstate list entry for
         the most recent highstat value. We will use this
         to parse json and look for bad states.
         """
+        print self.con.lindex(server + ":state.highstate", 0)
         return self.con.lindex(server + ":state.highstate", 0)
+    def check_failed_highstate(self, server, last_highstate):
+        """
+        Spit back the actual json from the highstate
+        """
+        highstate = self.con.get(server + ":" + last_highstate)
+        if "False" in highstate:
+            return True
+        else:
+            return False
