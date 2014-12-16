@@ -16,10 +16,14 @@ def index(request):
     server_con = CheckRedis("localhost")
     test_role = server_con.check_failed_role("php", "qa")
     template = get_template('index.html')
-    saltyness = 50
-    roles = ['web', 'lb', 'php', 'app', 'uti', 'queue', 'solr', 'es', 'node', 'nfs', 'sftp', 'rsyslog', 'mmonit']
+    saltyness = 0
+    #roles = ['web', 'lb', 'php', 'app', 'uti', 'queue', 'solr', 'es', 'node', 'nfs', 'sftp', 'rsyslog', 'mmonit']
+    roles = ['php']
     not_stg = ['rsyslog', 'mmonit']
     envs = ['qa', 'stg', 'prd']
+    context_dict = {}
+    for role in roles:
+        context_dict[role] = server_con.check_failed_role("php", "qa")
 
-    html = template.render(Context({'test_role': test_role, 'saltyness': saltyness, 'roles' : roles, 'not_stg' : not_stg, 'envs' : envs}))
+    html = template.render(Context({'context_dict' : context_dict, 'saltyness' : saltyness}))
     return HttpResponse(html)
