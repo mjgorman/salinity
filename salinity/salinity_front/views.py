@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.template.loader import get_template
 from django.template import Context
 import logging
+import collections
 from salinity_front.models import CheckRedis
 
 def index(request):
@@ -20,14 +21,16 @@ def index(request):
     context_dict = {}
     salted = 0
     for role in roles:
-        context_dict[role] = server_con.check_failed_role(role, "qa")
-        if server_con.check_failed_role(role, "qa") == "GREEN":
-            salted += 1
+        for env in envs:
+            context_dict[role + "_" + env] = {'status':server_con.check_failed_role(role, env), 'role':role, 'env':env}
+            if server_con.check_failed_role(role, env) == "GREEN":
+                salted += 1
 
+    sorted_dict = collections.OrderedDict(sorted(context_dict.items()))
     try:
         saltyness = len(roles) / salted
     except:
         saltyness = 0
 
-    html = template.render(Context({'context_dict' : context_dict, 'saltyness' : saltyness}))
+    html = template.render(Context({'context_dict' : sorted_dict, 'saltyness' : saltyness}))
     return HttpResponse(html)
