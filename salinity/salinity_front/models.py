@@ -19,11 +19,14 @@ class CheckRedis(object):
         Check for failed highstates
         """
         server_list = self.get_server_list("*" + role + "*" + env)
-        for server in (server for server in server_list if server):
-            if self.check_failed_highstate(server, self.find_last_highstate(server)):
-                return "RED"
-        if server_list:
-            return "GREEN"
+        try:
+            for server in (server for server in server_list if server):
+                if self.check_failed_highstate(server, self.find_last_highstate(server)):
+                    return "RED"
+            if server_list:
+                return "GREEN"
+        except TypeError:
+            return "None"
     def get_server_list(self, glob):
         """
         Using the server glob, find a matching list of servers in
