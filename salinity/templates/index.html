@@ -1,18 +1,19 @@
 <html>
 <head>
-<title>The servers are {{ saltyness }}% salty. </title>
+<title>Salinity: The servers are {{ saltyness }}% salty. </title>
 <meta http-equiv="refresh" content="30">
 </head>
 <body>
-<p>The servers are {{ saltyness }}% salty. 
-
+<img src='/static/logo.jpg' width='150' >
+<font size='20'> Salinity</p></font> 
+<font size='5'>The servers are {{ saltyness }}% salty. </font> 
 {% for role,result in context_dict.iteritems %}
 {% if forloop.first %}
 <p><table border="1" style="display: inline-block;">
 {% endif %}
 {% if result.env in 'qa' %}
 <td>{{ role }} </td>
-<td>{{ result.status }}</td>
+<td style="color: Black; background-color: {{ result.status }}">{{ result.status }}</style></td>
 </tr>
 {% if forloop.last %}
 </table>
@@ -20,14 +21,13 @@
 {% endif %}
 {% endfor %}
 
-
 {% for role,result in context_dict.iteritems %}
 {% if forloop.first %}
 <table border="1" style="display: inline-block;">
 {% endif %}
 {% if result.env in 'stg' %}
 <td>{{ role }} </td>
-<td>{{ result.status }}</td>
+<td style="color: Black; background-color: {{ result.status }}">{{ result.status }}</style></td>
 </tr>
 {% if forloop.last %}
 </table>
@@ -40,7 +40,7 @@
 <table border="1" style="display: inline-block;">
 {% endif %}
 {% if result.env in 'prd' %}
-<td>{{ role }} </td>
+<td style="color: Black; background-color: {{ result.status }}">{{ role }} </style></td>
 <td>{{ result.status }}</td>
 </tr>
 {% if forloop.last %}

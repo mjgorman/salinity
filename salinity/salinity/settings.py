@@ -89,3 +89,7 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 TEMPLATE_DIRS = ( 
     'templates', 
 )
+
+STATICFILES_DIRS = (
+    'static',
+)
