@@ -28,7 +28,7 @@ def index(request):
 
     sorted_dict = collections.OrderedDict(sorted(context_dict.items()))
     try:
-        saltyness = len(roles) / salted
+        saltyness = salted*100/39
     except ZeroDivisionError:
         saltyness = 0
 
