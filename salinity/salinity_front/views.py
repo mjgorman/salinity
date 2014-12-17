@@ -29,7 +29,7 @@ def index(request):
     sorted_dict = collections.OrderedDict(sorted(context_dict.items()))
     try:
         saltyness = len(roles) / salted
-    except:
+    except ZeroDivisionError:
         saltyness = 0
 
     html = template.render(Context({'context_dict' : sorted_dict, 'saltyness' : saltyness}))
