@@ -6,47 +6,47 @@
 <body>
 <img src='/static/logo.jpg' width='150' >
 <font size='20'> Salinity</p></font> 
-<font size='5'>The servers are {{ saltyness }}% salty. </font> 
+<font size='5'>The servers are {{ saltyness }}% salty as of {% now "h:i:s" %} </font> 
 {% for role,result in context_dict.iteritems %}
 {% if forloop.first %}
 <p><table border=1 style="display: inline-block;">
 {% endif %}
-{% if result.env in 'qa' %}
+{% ifequal result.env 'qa' %}
 <td>{{ role }} </td>
 <td style="color: Black; background-color: {{ result.status }}">{{ result.status }}</style></td>
 </tr>
 {% if forloop.last %}
 </table>
 {% endif %}
-{% endif %}
+{% endifequal %}
 {% endfor %}
 
 {% for role,result in context_dict.iteritems %}
 {% if forloop.first %}
 <table border=1 style="display: inline-block;">
 {% endif %}
-{% if result.env in 'stg' %}
+{% ifequal result.env 'stg' %}
 <td>{{ role }} </td>
 <td style="color: Black; background-color: {{ result.status }}">{{ result.status }}</style></td>
 </tr>
 {% if forloop.last %}
 </table>
 {% endif %}
-{% endif %}
+{% endifequal %}
 {% endfor %}
 
 {% for role,result in context_dict.iteritems %}
 {% if forloop.first %}
 <table border=1 style="display: inline-block;">
 {% endif %}
-{% if result.env in 'prd' %}
+{% ifequal result.env 'prd' %}
 <td>{{ role }} </style></td>
 <td style="color: Black; background-color: {{ result.status }}">{{ result.status }}</td>
 </tr>
 {% if forloop.last %}
 </table>
 {% endif %}
-{% endif %}
+{% endifequal %}
 {% endfor %}
 
 </body>
