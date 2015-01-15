@@ -48,6 +48,6 @@ class CheckRedis(object):
         Spit back the actual json from the highstate
         """
         highstate = self.con.get(server + ":" + last_highstate)
-        if "False" in highstate:
+        if '"result": false' in highstate.lower():
             return True
         return False
