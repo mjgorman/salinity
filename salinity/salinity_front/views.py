@@ -16,7 +16,7 @@ def index(request):
     logging.info(request)
     server_con = CheckRedis("localhost")
     template = get_template('index.html')
-    roles = {'app':['web', 'lb', 'php', 'app', 'util', 'queue', 'solr', 'es', 'node', 'nfs', 'sftp', 'rsyslog', 'mmonit'], 'ci': ['slave', 'ci']}
+    roles = {'app':['web', 'lb', 'php', 'app', 'util', 'queue', 'solr', 'es', 'node', 'nfs', 'sftp', 'rsyslog', 'mmonit'], 'ci': ['slave', 'ci', 'tarantula', 'awsutils']}
     no_stg = ['rsyslog', 'mmonit']
     envs = {'app':['qa', 'stg', 'prd'], 'ci':['ci']}
     context_dict = {}
