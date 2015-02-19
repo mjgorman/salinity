@@ -49,5 +49,20 @@
 {% endifequal %}
 {% endfor %}
 
+
+{% for role,result in context_dict.iteritems %}
+{% if forloop.first %}
+<table border=1 style="display: inline-block;">
+{% endif %}
+{% ifequal result.env 'ci' %}
+<td>{{ role }} </style></td>
+<td style="color: Black; background-color: {{ result.status }}">{{ result.status }}</td>
+</tr>
+{% if forloop.last %}
+</table>
+{% endif %}
+{% endifequal %}
+{% endfor %}
+
 </body>
 </html>
