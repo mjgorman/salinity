@@ -3,6 +3,8 @@ This is the models module. This is where I will put all the relevant classes.
 """
 #from django.db import models
 import redis
+import jsonpickle
+from time import time
 
 class CheckRedis(object):
     """
@@ -47,7 +49,14 @@ class CheckRedis(object):
         """
         Spit back the actual json from the highstate
         """
-        highstate = self.con.get(server + ":" + last_highstate)
-        if '"result": false' in highstate.lower():
-            return True
+        highstate = jsonpickle.decode(self.con.get(server + ":" + last_highstate))
+        for state, info in highstate['return'].iteritems():
+            if not info['result']:
+                return True
         return False
+    def get_context(self):
+        return self.con.get("saved_context_dict")
+    def get_context_timestamp(self):
+        return self.con.get("saved_context_timestamp")
+    def write_context(self, context):
+        self.con.set("saved_context_dict", context)
