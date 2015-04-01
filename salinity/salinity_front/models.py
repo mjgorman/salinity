@@ -54,9 +54,22 @@ class CheckRedis(object):
             if not info['result']:
                 return True
         return False
+    def get_highstate(self, server, jid):
+        return jsonpickle.decode(self.con.get(server + ":" + jid))
     def get_context(self):
         return self.con.get("saved_context_dict")
-    def get_context_timestamp(self):
-        return self.con.get("saved_context_timestamp")
     def write_context(self, context):
         self.con.set("saved_context_dict", context)
+        self.con.set("saved_context_timestamp", time()) 
+    def update_redis_context(self, envs, roles):
+        timestamp = float(self.con.get("saved_context_timestamp"))
+        now = time()
+        if abs(timestamp - now) > 300:
+            context_dict = {}
+            for env_type, env_list in envs.iteritems():
+                for env in env_list:
+                    for role in roles[env_type]:
+                        context_dict[role + "_" + env] = {'status':self.check_failed_role(role, env), 'role':role, 'env':env}
+                        print context_dict[role + "_" + env]
+            redis_context = jsonpickle.encode(context_dict)
+            self.write_context(redis_context)

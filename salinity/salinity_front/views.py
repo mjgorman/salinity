@@ -17,17 +17,11 @@ roles = {'app':['web', 'lb', 'php', 'app', 'util', 'queue', 'solr', 'es', 'node'
 no_stg = ['rsyslog', 'mmonit']
 envs = {'app':['qa', 'stg', 'prd'], 'ci':['ci']}
 
-def update_redis_context():
+def update_redis():
     while(True):
-        context_dict = {}
-        for env_type, env_list in envs.iteritems():
-            for env in env_list:
-                for role in roles[env_type]:
-                    context_dict[role + "_" + env] = {'status':server_con.check_failed_role(role, env), 'role':role, 'env':env}
-        redis_context = jsonpickle.encode(context_dict)
-        server_con.write_context(redis_context)
+        server_con.update_redis_context(envs, roles)
 
-update_redis = threading.Thread(target=update_redis_context)
+update_redis = threading.Thread(target=update_redis)
 
 def index(request):
     """
@@ -55,4 +49,21 @@ def index(request):
     if not update_redis.is_alive():
         update_redis.start()
 
+    return HttpResponse(html)
+
+def job(request, role="none", env="none"):
+    """
+    The job ID information page
+    """
+    logging.info(request)
+    template = get_template('job.html')
+    # Get these from URL parameters
+    params = request.GET.get('role')
+    role = params.split('_')[0]
+    env = params.split('_')[1]
+    server = server_con.get_server_list("*" + role + "*" + env)[0]
+
+    jid = server_con.find_last_highstate(server)
+    highstate = server_con.get_highstate(server, jid) 
+    html = template.render(Context({'jid': jid, 'role' : role, 'env' : env, 'highstate' : highstate}))
     return HttpResponse(html)

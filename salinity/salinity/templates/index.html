@@ -13,7 +13,7 @@
 {% endif %}
 {% ifequal result.env 'qa' %}
 <td>{{ role }} </td>
-<td style="color: Black; background-color: {{ result.status }}">{{ result.status }}</style></td>
+<td style="color: Black; background-color: {{ result.status }}"><a href='/job/?role={{ role }}'>{{ result.status }}</a></style></td>
 </tr>
 {% if forloop.last %}
 </table>
@@ -27,7 +27,7 @@
 {% endif %}
 {% ifequal result.env 'stg' %}
 <td>{{ role }} </td>
-<td style="color: Black; background-color: {{ result.status }}">{{ result.status }}</style></td>
+<td style="color: Black; background-color: {{ result.status }}"><a href='/job/?role={{ role }}'>{{ result.status }}</a></style></td>
 </tr>
 {% if forloop.last %}
 </table>
@@ -41,7 +41,7 @@
 {% endif %}
 {% ifequal result.env 'prd' %}
 <td>{{ role }} </style></td>
-<td style="color: Black; background-color: {{ result.status }}">{{ result.status }}</td>
+<td style="color: Black; background-color: {{ result.status }}"><a href='/job/?role={{ role }}'>{{ result.status }}</a></td>
 </tr>
 {% if forloop.last %}
 </table>
@@ -56,7 +56,7 @@
 {% endif %}
 {% ifequal result.env 'ci' %}
 <td>{{ role }} </style></td>
-<td style="color: Black; background-color: {{ result.status }}">{{ result.status }}</td>
+<td style="color: Black; background-color: {{ result.status }}"><a href='/job/?role={{ role }}'>{{ result.status }}</a></td>
 </tr>
 {% if forloop.last %}
 </table>
