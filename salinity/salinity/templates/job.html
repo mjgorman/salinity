@@ -1,0 +1,18 @@
+<html>
+<head>
+<title>Looking at: {{ jid }}</title>
+</head>
+<body>
+<img src='/static/logo.jpg' width='150' >
+<font size='20'> Salinity</p></font> 
+<font size='5'> Server: {{ role }} Environement: {{ env }}</p></font>
+<font size='5'>Job ID: {{ jid }}</p></font> 
+{% for state,info in highstate.return.iteritems %}
+<font size='3'>State: {{ state }}
+<p><t>Comment: {{ info.comment }}
+<p><t>Changes: {{ info.changes }}
+<p><t>Result: {{ info.result }}
+</p></font>
+{% endfor %}
+</body>
+</html>
