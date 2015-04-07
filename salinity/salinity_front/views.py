@@ -30,14 +30,17 @@ def index(request):
     logging.info(request)
     template = get_template('index.html')
     salted = 0
-    context_dict = jsonpickle.decode(server_con.get_context())
+    context_dict = server_con.get_context()
 
     for env_type, env_list in envs.iteritems():
         for env in env_list:
             for role in roles[env_type]:
-                if context_dict[role + "_" + env]['status'] == "GREEN":
-                    salted += 1
-    
+                try:
+                    if context_dict[role + "_" + env]['status'] == "GREEN":
+                        salted += 1
+                except:
+                    pass
+
     sorted_dict = collections.OrderedDict(sorted(context_dict.items()))
     try:
         saltyness = salted*100/((len(roles['app'])*3 + len(roles['ci']))-len(no_stg))

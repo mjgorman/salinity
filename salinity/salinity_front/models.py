@@ -58,6 +58,12 @@ class CheckRedis(object):
         return jsonpickle.decode(self.con.get(server + ":" + jid))
     def get_context(self):
         return self.con.get("saved_context_dict")
+    def get_context(self, context={"No": { "Valid": "Json"}}):
+        try:
+            context = jsonpickle.decode(self.con.get("saved_context_dict"))
+        except:
+            pass
+        return context
     def write_context(self, context):
         self.con.set("saved_context_dict", context)
         self.con.set("saved_context_timestamp", time()) 
