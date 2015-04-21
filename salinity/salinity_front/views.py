@@ -13,7 +13,7 @@ from time import time
 import threading
 
 server_con = CheckRedis("localhost")
-roles = {'app':['web', 'lb', 'php', 'app', 'util', 'queue', 'solr', 'es', 'node', 'nfs', 'sftp', 'rsyslog', 'mmonit'], 'ci': ['slave', 'ci', 'tarantula', 'awsutils']}
+roles = {'app':['web', 'lb', 'php', 'app', 'util', 'queue', 'solr', 'es', 'nfs', 'sftp', 'rsyslog', 'mmonit'], 'ci': ['slave', 'ci', 'tarantula', 'awsutils']}
 no_stg = ['rsyslog', 'mmonit']
 envs = {'app':['qa', 'stg', 'prd'], 'ci':['ci']}
 
