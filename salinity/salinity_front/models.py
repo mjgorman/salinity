@@ -3,6 +3,8 @@ This is the models module. This is where I will put all the relevant classes.
 """
 #from django.db import models
 import redis
+import jsonpickle
+from time import time
 
 class CheckRedis(object):
     """
@@ -47,7 +49,33 @@ class CheckRedis(object):
         """
         Spit back the actual json from the highstate
         """
-        highstate = self.con.get(server + ":" + last_highstate)
-        if '"result": false' in highstate.lower():
-            return True
+        highstate = jsonpickle.decode(self.con.get(server + ":" + last_highstate))
+        for state, info in highstate['return'].iteritems():
+            if not info['result']:
+                return True
         return False
+    def get_highstate(self, server, jid):
+        return jsonpickle.decode(self.con.get(server + ":" + jid))
+    def get_context(self):
+        return self.con.get("saved_context_dict")
+    def get_context(self, context={"No": { "Valid": "Json"}}):
+        try:
+            context = jsonpickle.decode(self.con.get("saved_context_dict"))
+        except:
+            pass
+        return context
+    def write_context(self, context):
+        self.con.set("saved_context_dict", context)
+        self.con.set("saved_context_timestamp", time()) 
+    def update_redis_context(self, envs, roles):
+        timestamp = float(self.con.get("saved_context_timestamp"))
+        now = time()
+        if abs(timestamp - now) > 300:
+            context_dict = {}
+            for env_type, env_list in envs.iteritems():
+                for env in env_list:
+                    for role in roles[env_type]:
+                        context_dict[role + "_" + env] = {'status':self.check_failed_role(role, env), 'role':role, 'env':env}
+                        print context_dict[role + "_" + env]
+            redis_context = jsonpickle.encode(context_dict)
+            self.write_context(redis_context)
