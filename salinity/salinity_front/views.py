@@ -64,7 +64,7 @@ def job(request, role="none", env="none"):
     params = request.GET.get('role')
     role = params.split('_')[0]
     env = params.split('_')[1]
-    server = server_con.get_server_list("*" + role + "*" + env)[0]
+    server = server_con.get_server_list(role, env)[0]
 
     jid = server_con.find_last_highstate(server)
     highstate = server_con.get_highstate(server, jid) 
