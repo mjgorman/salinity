@@ -5,7 +5,8 @@ This is the models module. This is where I will put all the relevant classes.
 import redis
 import jsonpickle
 from time import time
-import salt.wheel
+import subprocess
+import ast
 
 class CheckRedis(object):
     """
@@ -35,10 +36,8 @@ class CheckRedis(object):
         Using the server glob, find a matching list of servers in
         redis returns so that they can be checked individually.
         """
-        opts = salt.config.master_config('/etc/salt/master')
-        saltWheel = salt.wheel.Wheel(opts)
-        serverList = saltWheel.call_func('key.list', **{ 'match' : 'accepted' })['minions']
-        return [server for server in serverList if role in server and env in server]
+        serverList = ast.literal_eval(subprocess.check_output(["/usr/bin/sudo", "/opt/salinity/git/salinity/salinity_front/salt_client.py"]))
+        return [server for server,ip in serverList.iteritems() if role in server and env in server]
     def find_last_highstate(self, server):
         """
         Check the server:state.highstate list entry for
