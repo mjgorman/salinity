@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/mjgorman/salinity.svg?branch=master)](https://travis-ci.org/mjgorman/salinity)
 __Description__
 ----------------
 This project is designed a django backed frontend which will parse redis information
