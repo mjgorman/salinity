@@ -49,10 +49,13 @@ class CheckRedis(object):
         """
         Spit back the actual json from the highstate
         """
-        highstate = jsonpickle.decode(self.con.get(server + ":" + last_highstate))
-        for state, info in highstate['return'].iteritems():
-            if not info['result']:
-                return True
+        try:
+            highstate = jsonpickle.decode(self.con.get(server + ":" + last_highstate))
+            for state, info in highstate['return'].iteritems():
+                if not info['result']:
+                    return True
+        except:
+            return False
         return False
     def get_highstate(self, server, jid):
         return jsonpickle.decode(self.con.get(server + ":" + jid))
