@@ -18,11 +18,14 @@ class CheckRedis(object):
         """
         self.server = server
         self.con = redis.Redis(self.server)
-    def check_failed_role(self, role, env):
+    def check_failed_role(self, role, env, server_list=['aw1-web30-qa']):
         """
         Check for failed highstates
         """
-        server_list = self.get_server_list(role,env)
+        try:
+            server_list = self.get_server_list(role,env)
+        except Exception as e:
+            print "There was a problem, {}, using default server_list".format(e)
         try:
             for server in (server for server in server_list if server):
                 if self.check_failed_highstate(server, self.find_last_highstate(server)):
@@ -50,9 +53,12 @@ class CheckRedis(object):
         Spit back the actual json from the highstate
         """
         highstate = jsonpickle.decode(self.con.get(server + ":" + last_highstate))
-        for state, info in highstate['return'].iteritems():
-            if not info['result']:
-                return True
+        try:
+            for state, info in highstate['return'].iteritems():
+                if not info['result']:
+                    return True
+        except Exception as e:
+            print "Problem with highstate return: {}".format(e)
         return False
     def get_highstate(self, server, jid):
         return jsonpickle.decode(self.con.get(server + ":" + jid))
@@ -66,14 +72,14 @@ class CheckRedis(object):
         return context
     def write_context(self, context):
         self.con.set("saved_context_dict", context)
-        self.con.set("saved_context_timestamp", time()) 
     def update_redis_context(self, envs, roles, timestamp=0.0):
         try:
             timestamp = float(self.con.get("saved_context_timestamp"))
         except:
             pass
         now = time()
-        if abs(timestamp - now) > 300:
+        if abs(timestamp - now) > 1200:
+            self.con.set("saved_context_timestamp", time()) 
             context_dict = {}
             for env_type, env_list in envs.iteritems():
                 for env in env_list:
