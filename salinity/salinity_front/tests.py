@@ -5,6 +5,7 @@ from django.test import TestCase
 from salinity_front.models import CheckRedis
 from mock import MagicMock
 import salt.wheel
+import subprocess
 
 class CheckRedisTests(TestCase):
     """
@@ -23,6 +24,8 @@ class CheckRedisTests(TestCase):
         self.checkredis.con.get.return_value = "{\"jid\": \"01\", \"return\": {\"service_|-sshd_|-sshd_|-running\": {\"comment\": \"Service sshd is already enabled, and is in the desired state\", \"__run_num__\": 98, \"changes\": {}, \"name\": \"sshd\", \"result\": true}}}"
         salt.wheel.Wheel.call_func = MagicMock(name="method")
         salt.wheel.Wheel.call_func.return_value = {"minions": ['aw1-php70-qa', 'aw1-php80-qa']} 
+        subprocess.check_output = MagicMock(name="method")
+        subprocess.check_output.return_value = "{'aw1-php70-qa': ['10.26.40.112'], 'aw1-php80-qa': ['10.26.40.123'] }"
 
     def test_get_server_list(self):
         """
