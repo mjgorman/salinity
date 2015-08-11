@@ -5,6 +5,8 @@ This is the models module. This is where I will put all the relevant classes.
 import redis
 import jsonpickle
 from time import time
+import subprocess
+import ast
 
 class CheckRedis(object):
     """
@@ -20,7 +22,7 @@ class CheckRedis(object):
         """
         Check for failed highstates
         """
-        server_list = self.get_server_list("*" + role + "*" + env)
+        server_list = self.get_server_list(role,env)
         try:
             for server in (server for server in server_list if server):
                 if self.check_failed_highstate(server, self.find_last_highstate(server)):
@@ -29,15 +31,13 @@ class CheckRedis(object):
                 return "GREEN"
         except TypeError:
             return "None"
-    def get_server_list(self, glob):
+    def get_server_list(self, role, env):
         """
         Using the server glob, find a matching list of servers in
         redis returns so that they can be checked individually.
         """
-        server_list = []
-        for result in self.con.keys(glob + "*:state.highstate"):
-            server_list.append(result.split(":")[0])
-        return server_list
+        serverList = ast.literal_eval(subprocess.check_output(["/usr/bin/sudo", "/opt/salinity/git/salinity/salinity_front/salt_client.py"]))
+        return [server for server,ip in serverList.iteritems() if role in server and env in server]
     def find_last_highstate(self, server):
         """
         Check the server:state.highstate list entry for
@@ -70,8 +70,11 @@ class CheckRedis(object):
     def write_context(self, context):
         self.con.set("saved_context_dict", context)
         self.con.set("saved_context_timestamp", time()) 
-    def update_redis_context(self, envs, roles):
-        timestamp = float(self.con.get("saved_context_timestamp"))
+    def update_redis_context(self, envs, roles, timestamp=0.0):
+        try:
+            timestamp = float(self.con.get("saved_context_timestamp"))
+        except:
+            pass
         now = time()
         if abs(timestamp - now) > 300:
             context_dict = {}
